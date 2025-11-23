@@ -10,22 +10,29 @@ uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    st.subheader("Raw Uploaded Data")
-    st.dataframe(df)
+    
+    st.subheader("Raw Uploaded Data (ALL Rows)")
+    st.dataframe(df)   # <-- show ALL rows
 
     # Convert items column from string → list
     st.header("2. Cleaning Data")
     df['items'] = df['items'].apply(lambda x: [i.strip() for i in x.split(',')])
-    st.write("Converted 'items' into list format:")
-    st.dataframe(df.head())
+
+    st.write("Converted 'items' into list format (ALL Rows):")
+    st.dataframe(df)   # <-- show ALL rows
 
     # Encode data for FP-Growth
     st.header("3. Transaction Encoding")
     te = TransactionEncoder()
     te_array = te.fit(df['items']).transform(df['items'])
     encoded_df = pd.DataFrame(te_array, columns=te.columns_)
-    st.write("Encoded dataset:")
-    st.dataframe(encoded_df.head())
+
+    st.write("Encoded dataset (ALL Rows):")
+    st.dataframe(encoded_df)   # <-- show ALL rows
+
+    # Show number of unique items
+    st.write(f"Total transactions: **{len(df)}**")
+    st.write(f"Total unique items: **{len(encoded_df.columns)}**")
 
     # FP-Growth
     st.header("4. FP-Growth Frequent Itemsets")
